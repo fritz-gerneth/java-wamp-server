@@ -61,4 +61,14 @@
         </dependency>
 
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>org.springsource.repo.milestone</id>
+            <url>http://repo.springsource.org/milestone/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>
