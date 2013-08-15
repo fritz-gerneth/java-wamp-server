@@ -2,6 +2,7 @@ package de.innoaccel.wamp.server;
 
 import de.innoaccel.wamp.server.converter.Converter;
 import de.innoaccel.wamp.server.converter.InvalidMessageCode;
+import de.innoaccel.wamp.server.converter.MessageParseError;
 import de.innoaccel.wamp.server.message.Message;
 import junit.framework.Assert;
 import mockit.Expectations;
@@ -53,6 +54,26 @@ public class WebsocketTest
             WebSocketMessage m;
             WebsocketTest.this.session.sendMessage(m = withCapture());
             Assert.assertEquals("serializedMessage", m.getPayload());
+        }};
+    }
+
+    @Test
+    public void deserializeMessageDelegatesToMessageConverter() throws InvalidMessageCode, MessageParseError
+    {
+        this.socket.deserializeMessage("message");
+
+        new Verifications() {{
+            WebsocketTest.this.messageConverter.deserialize("message", (Websocket) any);
+        }};
+    }
+
+    @Test
+    public void deserializeMessageIsDoneWithWebsocketContext() throws InvalidMessageCode, MessageParseError
+    {
+        this.socket.deserializeMessage("message");
+
+        new Verifications() {{
+            WebsocketTest.this.messageConverter.deserialize(anyString, withSameInstance(WebsocketTest.this.socket));
         }};
     }
 }
