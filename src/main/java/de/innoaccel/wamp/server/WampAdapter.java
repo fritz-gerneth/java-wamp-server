@@ -36,8 +36,7 @@ public class WampAdapter extends TextWebSocketHandlerAdapter
     public void afterConnectionEstablished(WebSocketSession session) throws InvalidMessageCode, IOException
     {
         Websocket socket = new Websocket(session, this.messageConverter);
-        String sessionId = session.getId();
-        this.socketStore.put(sessionId, socket);
+        this.socketStore.put(session.getId(), socket);
         socket.sendMessage(new WelcomeMessage());
     }
 
