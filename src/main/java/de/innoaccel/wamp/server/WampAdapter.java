@@ -10,6 +10,8 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.adapter.TextWebSocketHandlerAdapter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class WampAdapter extends TextWebSocketHandlerAdapter
@@ -18,6 +20,11 @@ public class WampAdapter extends TextWebSocketHandlerAdapter
     private final Map<String, Websocket> socketStore;
 
     private final Converter messageConverter;
+
+    public WampAdapter(Converter messageConverter)
+    {
+        this(messageConverter, new HashMap<String, Websocket>());
+    }
 
     public WampAdapter(Converter messageConverter, Map<String, Websocket> socketStore)
     {
