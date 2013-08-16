@@ -8,6 +8,8 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Websocket
 {
@@ -15,15 +17,33 @@ public class Websocket
 
     private final Converter messageConverter;
 
+    private final Map<String, String> prefixMap;
+
     public Websocket(WebSocketSession session, Converter messageConverter)
+    {
+        this(session, messageConverter, new HashMap<String, String>());
+    }
+
+    public Websocket(WebSocketSession session, Converter messageConverter, Map<String, String> prefixMap)
     {
         this.session = session;
         this.messageConverter = messageConverter;
+        this.prefixMap = prefixMap;
     }
 
     public String getSessionId()
     {
         return this.session.getId();
+    }
+
+    public Map<String, String> getPrefixMap()
+    {
+        return this.prefixMap;
+    }
+
+    public void addPrefix(String prefix, String fullURI)
+    {
+        this.prefixMap.put(prefix, fullURI);
     }
 
     public void sendMessage(Message message) throws InvalidMessageCode, IOException

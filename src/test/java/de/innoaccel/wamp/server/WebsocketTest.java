@@ -14,6 +14,7 @@ import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
+import java.util.Map;
 
 public class WebsocketTest
 {
@@ -23,12 +24,15 @@ public class WebsocketTest
     @Mocked
     private Converter messageConverter;
 
+    @Mocked
+    private Map<String, String> prefixMap;
+
     private Websocket socket;
 
     @Before
     public void setUp()
     {
-        this.socket = new Websocket(this.session, this.messageConverter);
+        this.socket = new Websocket(this.session, this.messageConverter, this.prefixMap);
     }
 
     @Test
@@ -75,5 +79,21 @@ public class WebsocketTest
         new Verifications() {{
             WebsocketTest.this.messageConverter.deserialize(anyString, withSameInstance(WebsocketTest.this.socket));
         }};
+    }
+
+    @Test
+    public void getPrefixMapReturnsInstanceOfConstruction()
+    {
+        Assert.assertSame(this.prefixMap, this.socket.getPrefixMap());
+    }
+
+    @Test
+    public void addPrefixAddsToPrefixMap()
+    {
+        new Expectations() {{
+            WebsocketTest.this.prefixMap.put("prefix", "fullURI"); times = 1;
+        }};
+
+        this.socket.addPrefix("prefix", "fullURI");
     }
 }
