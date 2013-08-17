@@ -44,7 +44,7 @@ public class PrefixMessageConverterTest
     }
 
     @Test
-    public void serialzeMessageReturnsValidStringRepresentation(final PrefixMessage message, Websocket socket)
+    public void serializeMessageReturnsValidStringRepresentation(final PrefixMessage message, Websocket socket)
         throws InvalidMessageCode
     {
         new NonStrictExpectations() {{
@@ -59,13 +59,13 @@ public class PrefixMessageConverterTest
     }
 
     @Test(expected = MessageParseError.class)
-    public void deserialzeThrowsExceptionOnInvalidMarkup(Websocket socket) throws MessageParseError, InvalidMessageCode
+    public void deserializeThrowsExceptionOnInvalidMarkup(Websocket socket) throws MessageParseError, InvalidMessageCode
     {
         this.converter.deserialize("no-valid-message", socket);
     }
 
     @Test(expected = MessageParseError.class)
-    public void deserialzeThrowsExceptionOnEmptyPrefixField(Websocket socket) throws MessageParseError, InvalidMessageCode
+    public void deserializeThrowsExceptionOnEmptyPrefixField(Websocket socket) throws MessageParseError, InvalidMessageCode
     {
         this.converter.deserialize("[1, \"\", \"x\"]", socket);
     }
