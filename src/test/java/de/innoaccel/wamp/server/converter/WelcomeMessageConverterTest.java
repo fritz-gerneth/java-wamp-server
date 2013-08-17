@@ -42,13 +42,6 @@ public class WelcomeMessageConverterTest
         Assert.assertEquals(this.converter.serialize(message, socket), "[0, \"sessionId\", 1, \"\"]");
     }
 
-    @Test(expected = InvalidMessageCode.class)
-    public void serializeWelcomeMessageThrowsExceptionOnWrongMessage(final Message message, final Websocket socket)
-            throws InvalidMessageCode
-    {
-        this.converter.serialize(message, socket);
-    }
-
     @Test(expected = MessageParseError.class)
     public void deserializeThrowsExceptionForWrongSyntax(final Websocket socket) throws MessageParseError, InvalidMessageCode
     {
@@ -64,7 +57,7 @@ public class WelcomeMessageConverterTest
     @Test
     public void deserializeReturnsPopulatedWelcomeMessage(final Websocket socket) throws MessageParseError, InvalidMessageCode
     {
-        WelcomeMessage message = (WelcomeMessage) this.converter.deserialize("[0, \"mySessionId\", 1, \"serverIdent\"]", socket);
+        WelcomeMessage message = this.converter.deserialize("[0, \"mySessionId\", 1, \"serverIdent\"]", socket);
 
         Assert.assertEquals("mySessionId", message.getSessionId());
         Assert.assertEquals(1, message.getProtocolVersion());

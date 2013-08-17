@@ -7,7 +7,7 @@ import de.innoaccel.wamp.server.message.WelcomeMessage;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class WelcomeMessageConverter implements Converter
+public class WelcomeMessageConverter implements Converter<WelcomeMessage>
 {
     private static final Pattern messagePattern = Pattern.compile(
           "\\[\\s*(?<messageCode>\\d+)\\s*,"
@@ -22,19 +22,13 @@ public class WelcomeMessageConverter implements Converter
         return Message.WELCOME == messageCode;
     }
 
-    @Override
-    public String serialize(Message message, Websocket socket) throws InvalidMessageCode
-    {
-        throw new InvalidMessageCode(message.getMessageCode());
-    }
-
     public String serialize(WelcomeMessage message, Websocket socket) throws InvalidMessageCode
     {
         return "[" + Message.WELCOME + ", \"" + socket.getSessionId() + "\", 1, \"\"]";
     }
 
     @Override
-    public Message deserialize(String message, Websocket socket) throws MessageParseError, InvalidMessageCode
+    public WelcomeMessage deserialize(String message, Websocket socket) throws MessageParseError, InvalidMessageCode
     {
         Matcher matcher = WelcomeMessageConverter.messagePattern.matcher(message);
 
