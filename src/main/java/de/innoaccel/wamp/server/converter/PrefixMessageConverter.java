@@ -2,6 +2,7 @@ package de.innoaccel.wamp.server.converter;
 
 import de.innoaccel.wamp.server.Websocket;
 import de.innoaccel.wamp.server.message.Message;
+import de.innoaccel.wamp.server.message.PrefixMessage;
 
 public class PrefixMessageConverter implements Converter
 {
@@ -14,7 +15,8 @@ public class PrefixMessageConverter implements Converter
     @Override
     public String serialize(Message message, Websocket socket) throws InvalidMessageCode
     {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        PrefixMessage msg = (PrefixMessage) message;
+        return "[" + Message.PREFIX + ", \"" + msg.getPrefix() + "\", \"" + msg.getURI() + "\"]";
     }
 
     @Override
