@@ -15,8 +15,7 @@ public class PrefixMessageConverter implements Converter<PrefixMessage>
     @Override
     public String serialize(PrefixMessage message, Websocket socket) throws InvalidMessageCode
     {
-        PrefixMessage msg = (PrefixMessage) message;
-        return "[" + Message.PREFIX + ", \"" + msg.getPrefix() + "\", \"" + msg.getURI() + "\"]";
+        return "[" + Message.PREFIX + ", \"" + message.getPrefix() + "\", \"" + message.getURI() + "\"]";
     }
 
     @Override
