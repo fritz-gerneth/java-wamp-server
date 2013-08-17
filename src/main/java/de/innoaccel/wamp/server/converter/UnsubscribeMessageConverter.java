@@ -15,7 +15,7 @@ public class UnsubscribeMessageConverter implements Converter<UnsubscribeMessage
     @Override
     public String serialize(UnsubscribeMessage message, Websocket socket) throws InvalidMessageCode
     {
-        return null;
+        return "[" + Message.UNSUBSCRIBE + ", \"" + message.getTopicURI() + "\"]";
     }
 
     @Override
