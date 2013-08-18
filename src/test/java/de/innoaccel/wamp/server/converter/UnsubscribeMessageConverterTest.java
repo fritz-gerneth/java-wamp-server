@@ -5,6 +5,7 @@ import de.innoaccel.wamp.server.message.Message;
 import de.innoaccel.wamp.server.message.UnsubscribeMessage;
 import mockit.Expectations;
 import mockit.NonStrictExpectations;
+import mockit.Verifications;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -76,10 +77,12 @@ public class UnsubscribeMessageConverterTest
     }
 
     @Test
-    public void deserializedMessageHasFullURIOfMessage(Websocket socket) throws MessageParseError, InvalidMessageCode
+    public void deserializeDelegatesURIInflationToSocket(final Websocket socket) throws MessageParseError, InvalidMessageCode
     {
-        UnsubscribeMessage message = this.converter.deserialize("[6, \"x\"]", socket);
+        this.converter.deserialize("[6, \"x\"]", socket);
 
-        Assert.assertEquals("x", message.getTopicURI());
+        new Verifications() {{
+            socket.inflateCURI("x");
+        }};
     }
 }

@@ -39,6 +39,6 @@ public class UnsubscribeMessageConverter implements Converter<UnsubscribeMessage
             throw new InvalidMessageCode(messageCode);
         }
 
-        return new UnsubscribeMessage(matcher.group("uri"));
+        return new UnsubscribeMessage(socket.inflateCURI(matcher.group("uri")));
     }
 }
