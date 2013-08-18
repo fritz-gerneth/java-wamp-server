@@ -96,4 +96,37 @@ public class WebsocketTest
 
         this.socket.addPrefix("prefix", "fullURI");
     }
+
+    @Test
+    public void inflateCURIIgnoresFQURIsAndReturnsAsIs()
+    {
+        Assert.assertEquals("http://effms/test#test", this.socket.inflateCURI("http://effms/test#test"));
+    }
+
+    @Test
+    public void inflateCURIReturnsAsIsWhenNoColon()
+    {
+        Assert.assertEquals("prefix-with-no-colon", this.socket.inflateCURI("prefix-with-no-colon"));
+    }
+
+    @Test
+    public void inflateCURIReturnsAsIsWhenNoRespectivePrefixIsFound()
+    {
+        new Expectations() {{
+            WebsocketTest.this.prefixMap.containsKey("prefix"); result = false;
+        }};
+
+        Assert.assertEquals("prefix:reference", this.socket.inflateCURI("prefix:reference"));
+    }
+
+    @Test
+    public void inflateCURIReturnsURIWithReplacedPrefixWhenPresent()
+    {
+        new Expectations() {{
+            WebsocketTest.this.prefixMap.containsKey("prefix"); result = true;
+            WebsocketTest.this.prefixMap.get("prefix"); result = "http://effms/";
+        }};
+
+        Assert.assertEquals("http://effms/reference", this.socket.inflateCURI("prefix:reference"));
+    }
 }
