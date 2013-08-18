@@ -50,4 +50,36 @@ public class UnsubscribeMessageConverterTest
 
         Assert.assertTrue(this.converter.serialize(message, socket).matches("\\[(\\d+),\\s\"(.+?)\"\\]"));
     }
+
+    @Test(expected = MessageParseError.class)
+    public void deserializeThrowsExceptionOnInvalidMessageMarkup(Websocket socket) throws MessageParseError, InvalidMessageCode
+    {
+        this.converter.deserialize("[invalid", socket);
+    }
+
+    @Test(expected = InvalidMessageCode.class)
+    public void deserializeThrowsExceptionOnInvalidMessageCode(Websocket socket) throws MessageParseError, InvalidMessageCode
+    {
+        this.converter.deserialize("[4, \"x\"]", socket);
+    }
+
+    @Test
+    public void deserializeAcceptsCorrectMessageType(Websocket socket) throws MessageParseError, InvalidMessageCode
+    {
+        this.converter.deserialize("[6, \"x\"]", socket);
+    }
+
+    @Test(expected = MessageParseError.class)
+    public void deserializeURIFragmentRequired(Websocket socket) throws MessageParseError, InvalidMessageCode
+    {
+        this.converter.deserialize("[6, \"\"]", socket);
+    }
+
+    @Test
+    public void deserializedMessageHasFullURIOfMessage(Websocket socket) throws MessageParseError, InvalidMessageCode
+    {
+        UnsubscribeMessage message = this.converter.deserialize("[6, \"x\"]", socket);
+
+        Assert.assertEquals("x", message.getTopicURI());
+    }
 }
