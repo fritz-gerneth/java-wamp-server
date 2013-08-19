@@ -68,6 +68,7 @@
             <version>3.1.0</version>
         </dependency>
 
+        <!-- For SockJS -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
