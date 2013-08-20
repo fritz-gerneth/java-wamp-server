@@ -10,10 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 import java.io.IOException;
 
-public class EventMessageConverterTest
+public class EventMessageConverterTest extends GeneralMessageTests<EventMessage>
 {
-    private EventMessageConverter converter;
-
     @Before
     public void setUp()
     {
@@ -30,42 +28,6 @@ public class EventMessageConverterTest
     public void canNotConvertOtherMessage()
     {
         Assert.assertFalse(this.converter.canConvert(Message.CALL_ERROR));
-    }
-
-    @Test(expected = MessageParseException.class)
-    public void deserializeThrowsMessageParseExceptionWhenMessageIsNoArray(final Websocket socket)
-        throws IOException, MessageParseException, InvalidMessageCodeException
-    {
-        this.converter.deserialize("message", socket);
-    }
-
-    @Test(expected = MessageParseException.class)
-    public void deserializeThrowsMessageParseExceptionWhenThereIsNoFirstField(final Websocket socket)
-            throws IOException, MessageParseException, InvalidMessageCodeException
-    {
-        this.converter.deserialize("[]", socket);
-    }
-
-
-    @Test(expected = MessageParseException.class)
-    public void deserializeThrowsMessageParseExceptionWhenFirstFieldIsNoNumber(final Websocket socket)
-            throws IOException, MessageParseException, InvalidMessageCodeException
-    {
-        this.converter.deserialize("[null]", socket);
-    }
-
-    @Test(expected = MessageParseException.class)
-    public void deserializeThrowsMessageParseExceptionWhenFirstFieldIsNoInteger(final Websocket socket)
-        throws IOException, MessageParseException, InvalidMessageCodeException
-    {
-        this.converter.deserialize("[0.5f]", socket);
-    }
-
-    @Test(expected = InvalidMessageCodeException.class)
-    public void deserializeThrowsInvalidMessageCodeExceptionWhenWrongMessageCode(final Websocket socket)
-            throws IOException, MessageParseException, InvalidMessageCodeException
-    {
-        this.converter.deserialize("[" + Message.SUBSCRIBE + "]", socket);
     }
 
     @Test(expected = MessageParseException.class)

@@ -11,10 +11,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-public class PrefixMessageConverterTest
+public class PrefixMessageConverterTest extends GeneralMessageTests<PrefixMessage>
 {
-    private PrefixMessageConverter converter;
-
     @Before
     public void setUp()
     {
@@ -58,41 +56,6 @@ public class PrefixMessageConverterTest
             "[1,\"myPrefix\",\"http://innoaccel.de/myPrefix\"]",
             this.converter.serialize(message, socket)
         );
-    }
-
-    @Test(expected = MessageParseException.class)
-    public void deserializeThrowsMessageParseExceptionWhenMessageIsNoArray(final Websocket socket)
-        throws IOException, MessageParseException, InvalidMessageCodeException
-    {
-        this.converter.deserialize("message", socket);
-    }
-
-    @Test(expected = MessageParseException.class)
-    public void deserializeThrowsMessageParseExceptionWhenThereIsNoFirstField(final Websocket socket)
-        throws IOException, MessageParseException, InvalidMessageCodeException
-    {
-        this.converter.deserialize("[]", socket);
-    }
-
-    @Test(expected = MessageParseException.class)
-    public void deserializeThrowsMessageParseExceptionWhenFirstFieldIsNoNumber(final Websocket socket)
-            throws IOException, MessageParseException, InvalidMessageCodeException
-    {
-        this.converter.deserialize("[null]", socket);
-    }
-
-    @Test(expected = MessageParseException.class)
-    public void deserializeThrowsMessageParseExceptionWhenFirstFieldIsNoInteger(final Websocket socket)
-        throws IOException, MessageParseException, InvalidMessageCodeException
-    {
-        this.converter.deserialize("[0.5f]", socket);
-    }
-
-    @Test(expected = InvalidMessageCodeException.class)
-    public void deserializeThrowsInvalidMessageCodeExceptionWhenWrongMessageCode(final Websocket socket)
-        throws IOException, MessageParseException, InvalidMessageCodeException
-    {
-        this.converter.deserialize("[" + Message.SUBSCRIBE + "]", socket);
     }
 
     @Test(expected = MessageParseException.class)

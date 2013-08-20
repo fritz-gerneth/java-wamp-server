@@ -2,6 +2,8 @@ package de.innoaccel.wamp.server.message;
 
 public interface Message
 {
+    public static final int INVALID = -1;
+
     public static final int WELCOME = 0;
 
     public static final int PREFIX = 1;
