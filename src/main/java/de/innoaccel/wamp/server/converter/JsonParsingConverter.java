@@ -69,7 +69,7 @@ abstract public class JsonParsingConverter<T extends Message> implements Convert
         return text;
     }
 
-    protected Object readAnyTypeAt(JsonNode rootNode, int position) throws MessageParseException
+    protected Object readAnyAt(JsonNode rootNode, int position) throws MessageParseException
     {
         JsonNode objectNode = rootNode.get(position);
         if (null == objectNode) {
