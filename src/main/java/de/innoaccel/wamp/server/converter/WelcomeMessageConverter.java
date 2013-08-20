@@ -1,21 +1,13 @@
 package de.innoaccel.wamp.server.converter;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import de.innoaccel.wamp.server.Websocket;
 import de.innoaccel.wamp.server.message.Message;
 import de.innoaccel.wamp.server.message.WelcomeMessage;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-public class WelcomeMessageConverter implements Converter<WelcomeMessage>
+public class WelcomeMessageConverter extends JsonParsingConverter<WelcomeMessage>
 {
-    private static final Pattern messagePattern = Pattern.compile(
-          "\\[\\s*(?<messageCode>\\d+)\\s*,"
-        + "\\s*\"(?<sessionId>.*?)\"\\s*,"
-        + "\\s*(?<protocolVersion>\\d+)\\s*,"
-        + "\\s*\"(?<serverIdent>.*?)\"\\s*\\]"
-    );
-
     @Override
     public boolean canConvert(int messageCode)
     {
@@ -24,28 +16,27 @@ public class WelcomeMessageConverter implements Converter<WelcomeMessage>
 
     public String serialize(WelcomeMessage message, Websocket socket) throws InvalidMessageCodeException
     {
-        return "[" + Message.WELCOME + ", \"" + socket.getSessionId() + "\", 1, \"\"]";
+        try {
+            return this.objectMapper.writeValueAsString(new Object[] {
+                Message.WELCOME,
+                socket.getSessionId(),
+                message.getProtocolVersion(),
+                message.getServerIdent()
+            });
+        } catch (JsonProcessingException ex) {
+            throw new InvalidMessageCodeException(Message.WELCOME);
+        }
     }
 
     @Override
-    public WelcomeMessage deserialize(String message, Websocket socket) throws MessageParseException, InvalidMessageCodeException
+    protected WelcomeMessage deserialize(JsonNode message, Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
-        Matcher matcher = WelcomeMessageConverter.messagePattern.matcher(message);
+        this.assertMessageCode(message, Message.WELCOME);
 
-        if (!matcher.matches()) {
-            throw new MessageParseException(message);
-        }
-
-        int messageCode = Integer.parseInt(matcher.group("messageCode"));
-        if (Message.WELCOME != messageCode) {
-            throw new InvalidMessageCodeException(messageCode);
-        }
-
-        WelcomeMessage rebuiltMessage = new WelcomeMessage(
-            matcher.group("sessionId"),
-            Integer.parseInt(matcher.group("protocolVersion")),
-            matcher.group("serverIdent")
+        return new WelcomeMessage(
+            this.readStringAt(message, 1),
+            this.readIntAt(message, 2),
+            this.readStringAt(message, 3)
         );
-        return rebuiltMessage;
     }
 }

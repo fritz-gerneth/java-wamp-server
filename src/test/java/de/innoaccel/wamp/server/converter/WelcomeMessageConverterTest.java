@@ -4,14 +4,13 @@ import de.innoaccel.wamp.server.Websocket;
 import de.innoaccel.wamp.server.message.Message;
 import de.innoaccel.wamp.server.message.WelcomeMessage;
 import mockit.Expectations;
+import mockit.NonStrictExpectations;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class WelcomeMessageConverterTest
+public class WelcomeMessageConverterTest extends GeneralMessageTests<WelcomeMessage>
 {
-    private WelcomeMessageConverter converter;
-
     @Before
     public void setUp()
     {
@@ -27,31 +26,75 @@ public class WelcomeMessageConverterTest
     @Test
     public void canNotConvertOtherMessageTypes()
     {
-        Assert.assertFalse(this.converter.canConvert(54));
+        Assert.assertFalse(this.converter.canConvert(Message.INVALID));
     }
 
     @Test
     public void serializeWelcomeMessageUsesSessionIdOfSocket(final WelcomeMessage message, final Websocket socket)
-            throws InvalidMessageCodeException
+        throws InvalidMessageCodeException
     {
         new Expectations()
         {{
             socket.getSessionId(); result = "sessionId";
         }};
+        new NonStrictExpectations() {{
+            message.getProtocolVersion(); result = 1;
+            message.getServerIdent(); result = "ident";
+        }};
 
-        Assert.assertEquals(this.converter.serialize(message, socket), "[0, \"sessionId\", 1, \"\"]");
+        Assert.assertEquals("[0,\"sessionId\",1,\"ident\"]", this.converter.serialize(message, socket));
+    }
+
+    @Test
+    public void serializeUsesValuesOfWelcomeMessage(final WelcomeMessage message, final Websocket socket)
+        throws InvalidMessageCodeException
+    {
+        new Expectations()
+        {{
+            message.getProtocolVersion(); result = 1;
+            message.getServerIdent(); result = "ident";
+        }};
+        new NonStrictExpectations() {{
+            socket.getSessionId(); result = "sessionId";
+        }};
+
+        Assert.assertEquals("[0,\"sessionId\",1,\"ident\"]", this.converter.serialize(message, socket));
     }
 
     @Test(expected = MessageParseException.class)
-    public void deserializeThrowsExceptionForWrongSyntax(final Websocket socket) throws MessageParseException, InvalidMessageCodeException
+    public void deserializeExceptionOnMissingSessionField(final Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
-        this.converter.deserialize("[dd", socket);
+        this.converter.deserialize("[" + Message.WELCOME + "]", socket);
     }
 
-    @Test(expected = InvalidMessageCodeException.class)
-    public void deserializeThrowsExceptionForWrongCode(final Websocket socket) throws MessageParseException, InvalidMessageCodeException
+    @Test(expected = MessageParseException.class)
+    public void deserializeExceptionWhenSessionFieldIsNoString(final Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
-        this.converter.deserialize("[4, \"x\", 1 ,\"x\"]", socket);
+        this.converter.deserialize("[" + Message.WELCOME + ", null]", socket);
+    }
+
+    @Test(expected = MessageParseException.class)
+    public void deserializeExceptionOnMissingVersionField(final Websocket socket) throws MessageParseException, InvalidMessageCodeException
+    {
+        this.converter.deserialize("[" + Message.WELCOME + ", \"id\"]", socket);
+    }
+
+    @Test(expected = MessageParseException.class)
+    public void deserializeExceptionWhenVersionFieldIsNoInteger(final Websocket socket) throws MessageParseException, InvalidMessageCodeException
+    {
+        this.converter.deserialize("[" + Message.WELCOME + ", , \"id\", null]", socket);
+    }
+
+    @Test(expected = MessageParseException.class)
+    public void deserializeExceptionOnMissingIdentField(final Websocket socket) throws MessageParseException, InvalidMessageCodeException
+    {
+        this.converter.deserialize("[" + Message.WELCOME + ", \"id\", 1]", socket);
+    }
+
+    @Test(expected = MessageParseException.class)
+    public void deserializeExceptionWhenIdentFieldIsNoString(final Websocket socket) throws MessageParseException, InvalidMessageCodeException
+    {
+        this.converter.deserialize("[" + Message.WELCOME + ", , \"id\", 1, null]", socket);
     }
 
     @Test
