@@ -109,7 +109,7 @@ public class EventMessageConverterTest
             socket.inflateCURI("prefix:myEvent"); result = "http://effms.de/myEvent";
         }};
 
-        EventMessage message = this.converter.deserialize("[" + Message.EVENT + ", \"prefix:myEvent\", null]", socket);
+        this.converter.deserialize("[" + Message.EVENT + ", \"prefix:myEvent\", null]", socket);
     }
 
     @Test
