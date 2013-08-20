@@ -13,6 +13,11 @@ abstract public class JsonParsingConverter<T extends Message> implements Convert
 {
     protected final ObjectMapper objectMapper;
 
+    public JsonParsingConverter()
+    {
+        this(new ObjectMapper());
+    }
+
     public JsonParsingConverter(ObjectMapper objectMapper)
     {
         this.objectMapper = objectMapper;
