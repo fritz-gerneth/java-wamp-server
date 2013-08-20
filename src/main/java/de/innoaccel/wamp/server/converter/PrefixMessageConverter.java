@@ -24,7 +24,7 @@ public class PrefixMessageConverter extends JsonParsingConverter<PrefixMessage>
                 message.getURI()
             });
         } catch (JsonProcessingException ex) {
-            throw new InvalidMessageCodeException(Message.EVENT);
+            throw new InvalidMessageCodeException(Message.PREFIX);
         }
     }
 
