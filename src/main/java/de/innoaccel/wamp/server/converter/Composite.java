@@ -47,29 +47,29 @@ public class Composite implements Converter
     }
 
     @Override
-    public String serialize(Message message, Websocket socket) throws InvalidMessageCode
+    public String serialize(Message message, Websocket socket) throws InvalidMessageCodeException
     {
         Converter converter = this.getConverter(message.getMessageCode());
         if (null == converter) {
-            throw new InvalidMessageCode(message.getMessageCode());
+            throw new InvalidMessageCodeException(message.getMessageCode());
         }
 
         return converter.serialize(message, socket);
     }
 
     @Override
-    public Message deserialize(String message, Websocket socket) throws MessageParseError, InvalidMessageCode
+    public Message deserialize(String message, Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
         Matcher matcher = this.messageCodeMatcher.matcher(message);
 
         if (!matcher.matches()) {
-            throw new MessageParseError(message);
+            throw new MessageParseException(message);
         }
 
         int messageCode = Integer.parseInt(matcher.group(1));
         Converter messageConverter = this.getConverter(messageCode);
         if (null == messageConverter) {
-            throw new InvalidMessageCode(messageCode);
+            throw new InvalidMessageCodeException(messageCode);
         }
 
         return messageConverter.deserialize(message, socket);

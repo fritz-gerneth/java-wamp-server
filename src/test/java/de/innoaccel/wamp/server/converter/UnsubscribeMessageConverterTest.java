@@ -33,7 +33,7 @@ public class UnsubscribeMessageConverterTest
     }
 
     @Test
-    public void serializeUsesTopicURLOfMessage(final UnsubscribeMessage message, Websocket socket) throws InvalidMessageCode
+    public void serializeUsesTopicURLOfMessage(final UnsubscribeMessage message, Websocket socket) throws InvalidMessageCodeException
     {
         new Expectations() {{
             message.getTopicURI(); result = "http://innoaccel";
@@ -43,7 +43,7 @@ public class UnsubscribeMessageConverterTest
     }
 
     @Test
-    public void serializeReturnsValidMarkup(final UnsubscribeMessage message, Websocket socket) throws InvalidMessageCode
+    public void serializeReturnsValidMarkup(final UnsubscribeMessage message, Websocket socket) throws InvalidMessageCodeException
     {
         new NonStrictExpectations() {{
             message.getTopicURI(); result = "http://innoaccel";
@@ -52,32 +52,32 @@ public class UnsubscribeMessageConverterTest
         Assert.assertTrue(this.converter.serialize(message, socket).matches("\\[(\\d+),\\s\"(.+?)\"\\]"));
     }
 
-    @Test(expected = MessageParseError.class)
-    public void deserializeThrowsExceptionOnInvalidMessageMarkup(Websocket socket) throws MessageParseError, InvalidMessageCode
+    @Test(expected = MessageParseException.class)
+    public void deserializeThrowsExceptionOnInvalidMessageMarkup(Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
         this.converter.deserialize("[invalid", socket);
     }
 
-    @Test(expected = InvalidMessageCode.class)
-    public void deserializeThrowsExceptionOnInvalidMessageCode(Websocket socket) throws MessageParseError, InvalidMessageCode
+    @Test(expected = InvalidMessageCodeException.class)
+    public void deserializeThrowsExceptionOnInvalidMessageCode(Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
         this.converter.deserialize("[4, \"x\"]", socket);
     }
 
     @Test
-    public void deserializeAcceptsCorrectMessageType(Websocket socket) throws MessageParseError, InvalidMessageCode
+    public void deserializeAcceptsCorrectMessageType(Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
         this.converter.deserialize("[6, \"x\"]", socket);
     }
 
-    @Test(expected = MessageParseError.class)
-    public void deserializeURIFragmentRequired(Websocket socket) throws MessageParseError, InvalidMessageCode
+    @Test(expected = MessageParseException.class)
+    public void deserializeURIFragmentRequired(Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
         this.converter.deserialize("[6, \"\"]", socket);
     }
 
     @Test
-    public void deserializeDelegatesURIInflationToSocket(final Websocket socket) throws MessageParseError, InvalidMessageCode
+    public void deserializeDelegatesURIInflationToSocket(final Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
         this.converter.deserialize("[6, \"x\"]", socket);
 

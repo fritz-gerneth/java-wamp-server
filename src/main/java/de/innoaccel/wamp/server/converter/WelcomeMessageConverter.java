@@ -22,23 +22,23 @@ public class WelcomeMessageConverter implements Converter<WelcomeMessage>
         return Message.WELCOME == messageCode;
     }
 
-    public String serialize(WelcomeMessage message, Websocket socket) throws InvalidMessageCode
+    public String serialize(WelcomeMessage message, Websocket socket) throws InvalidMessageCodeException
     {
         return "[" + Message.WELCOME + ", \"" + socket.getSessionId() + "\", 1, \"\"]";
     }
 
     @Override
-    public WelcomeMessage deserialize(String message, Websocket socket) throws MessageParseError, InvalidMessageCode
+    public WelcomeMessage deserialize(String message, Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
         Matcher matcher = WelcomeMessageConverter.messagePattern.matcher(message);
 
         if (!matcher.matches()) {
-            throw new MessageParseError(message);
+            throw new MessageParseException(message);
         }
 
         int messageCode = Integer.parseInt(matcher.group("messageCode"));
         if (Message.WELCOME != messageCode) {
-            throw new InvalidMessageCode(messageCode);
+            throw new InvalidMessageCodeException(messageCode);
         }
 
         WelcomeMessage rebuiltMessage = new WelcomeMessage(

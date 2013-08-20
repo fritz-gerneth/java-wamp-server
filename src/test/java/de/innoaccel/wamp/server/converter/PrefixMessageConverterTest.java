@@ -33,7 +33,7 @@ public class PrefixMessageConverterTest
 
     @Test
     public void serializesMessagesUsesPrefixAndURIOfMessage(final PrefixMessage message, Websocket socket)
-        throws InvalidMessageCode
+        throws InvalidMessageCodeException
     {
         new Expectations() {{
             message.getPrefix(); result = "myPrefix";
@@ -45,7 +45,7 @@ public class PrefixMessageConverterTest
 
     @Test
     public void serializeMessageReturnsValidStringRepresentation(final PrefixMessage message, Websocket socket)
-        throws InvalidMessageCode
+        throws InvalidMessageCodeException
     {
         new NonStrictExpectations() {{
             message.getPrefix(); result = "myPrefix";
@@ -58,39 +58,39 @@ public class PrefixMessageConverterTest
         );
     }
 
-    @Test(expected = MessageParseError.class)
-    public void deserializeThrowsExceptionOnInvalidMarkup(Websocket socket) throws MessageParseError, InvalidMessageCode
+    @Test(expected = MessageParseException.class)
+    public void deserializeThrowsExceptionOnInvalidMarkup(Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
         this.converter.deserialize("no-valid-message", socket);
     }
 
-    @Test(expected = MessageParseError.class)
-    public void deserializeThrowsExceptionOnEmptyPrefixField(Websocket socket) throws MessageParseError, InvalidMessageCode
+    @Test(expected = MessageParseException.class)
+    public void deserializeThrowsExceptionOnEmptyPrefixField(Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
         this.converter.deserialize("[1, \"\", \"x\"]", socket);
     }
 
-    @Test(expected = MessageParseError.class)
-    public void deserialzeThrowsExceptionOnEmptyURIField(Websocket socket) throws MessageParseError, InvalidMessageCode
+    @Test(expected = MessageParseException.class)
+    public void deserialzeThrowsExceptionOnEmptyURIField(Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
         this.converter.deserialize("[1, \"x\", \"\"]", socket);
     }
 
-    @Test(expected = InvalidMessageCode.class)
-    public void deserialzeThrowsExceptionOnInvalidMessageCodeButValidMarkup(Websocket socket) throws MessageParseError, InvalidMessageCode
+    @Test(expected = InvalidMessageCodeException.class)
+    public void deserialzeThrowsExceptionOnInvalidMessageCodeButValidMarkup(Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
         this.converter.deserialize("[4, \"x\", \"x\"]", socket);
     }
 
     @Test
-    public void deserialzeResultingPrefixMessageHasCorrectPrefix(Websocket socket) throws MessageParseError, InvalidMessageCode
+    public void deserialzeResultingPrefixMessageHasCorrectPrefix(Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
         PrefixMessage message = this.converter.deserialize("[1, \"prefix\", \"x\"]", socket);
         Assert.assertEquals("prefix", message.getPrefix());
     }
 
     @Test
-    public void deserialzeResultingPrefixMessageHasCorrectURI(Websocket socket) throws MessageParseError, InvalidMessageCode
+    public void deserialzeResultingPrefixMessageHasCorrectURI(Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
         PrefixMessage message = this.converter.deserialize("[1, \"x\", \"uri\"]", socket);
         Assert.assertEquals("uri", message.getURI());

@@ -32,7 +32,7 @@ public class WelcomeMessageConverterTest
 
     @Test
     public void serializeWelcomeMessageUsesSessionIdOfSocket(final WelcomeMessage message, final Websocket socket)
-            throws InvalidMessageCode
+            throws InvalidMessageCodeException
     {
         new Expectations()
         {{
@@ -42,20 +42,20 @@ public class WelcomeMessageConverterTest
         Assert.assertEquals(this.converter.serialize(message, socket), "[0, \"sessionId\", 1, \"\"]");
     }
 
-    @Test(expected = MessageParseError.class)
-    public void deserializeThrowsExceptionForWrongSyntax(final Websocket socket) throws MessageParseError, InvalidMessageCode
+    @Test(expected = MessageParseException.class)
+    public void deserializeThrowsExceptionForWrongSyntax(final Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
         this.converter.deserialize("[dd", socket);
     }
 
-    @Test(expected = InvalidMessageCode.class)
-    public void deserializeThrowsExceptionForWrongCode(final Websocket socket) throws MessageParseError, InvalidMessageCode
+    @Test(expected = InvalidMessageCodeException.class)
+    public void deserializeThrowsExceptionForWrongCode(final Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
         this.converter.deserialize("[4, \"x\", 1 ,\"x\"]", socket);
     }
 
     @Test
-    public void deserializeReturnsPopulatedWelcomeMessage(final Websocket socket) throws MessageParseError, InvalidMessageCode
+    public void deserializeReturnsPopulatedWelcomeMessage(final Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
         WelcomeMessage message = this.converter.deserialize("[0, \"mySessionId\", 1, \"serverIdent\"]", socket);
 

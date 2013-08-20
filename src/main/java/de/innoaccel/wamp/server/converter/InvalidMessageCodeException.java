@@ -1,10 +1,10 @@
 package de.innoaccel.wamp.server.converter;
 
-public class InvalidMessageCode extends Exception
+public class InvalidMessageCodeException extends Exception
 {
     private int messageCode;
 
-    public InvalidMessageCode(int messageCode)
+    public InvalidMessageCodeException(int messageCode)
     {
         super("Invalid message code");
 

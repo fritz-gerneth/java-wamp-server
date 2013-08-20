@@ -1,8 +1,8 @@
 package de.innoaccel.wamp.server;
 
 import de.innoaccel.wamp.server.converter.Converter;
-import de.innoaccel.wamp.server.converter.InvalidMessageCode;
-import de.innoaccel.wamp.server.converter.MessageParseError;
+import de.innoaccel.wamp.server.converter.InvalidMessageCodeException;
+import de.innoaccel.wamp.server.converter.MessageParseException;
 import de.innoaccel.wamp.server.message.Message;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -49,12 +49,12 @@ public class Websocket
         this.prefixMap.put(prefix, fullURI);
     }
 
-    public void sendMessage(Message message) throws InvalidMessageCode, IOException
+    public void sendMessage(Message message) throws InvalidMessageCodeException, IOException
     {
         this.session.sendMessage(new TextMessage(this.messageConverter.serialize(message, this)));
     }
 
-    public Message deserializeMessage(String rawMessage) throws InvalidMessageCode, MessageParseError
+    public Message deserializeMessage(String rawMessage) throws InvalidMessageCodeException, MessageParseException
     {
        return this.messageConverter.deserialize(rawMessage, this);
     }

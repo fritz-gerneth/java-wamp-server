@@ -86,9 +86,9 @@ public class CompositeTest
         Assert.assertNull(this.composite.getConverter(4));
     }
 
-    @Test(expected = InvalidMessageCode.class)
+    @Test(expected = InvalidMessageCodeException.class)
     public void serializeThrowsExceptionsIfNoConverterApplies(Message message, Websocket socket)
-        throws InvalidMessageCode
+        throws InvalidMessageCodeException
     {
         new Expectations() {{
             CompositeTest.this.firstConverter.canConvert(anyInt); result = false;
@@ -100,7 +100,7 @@ public class CompositeTest
 
     @Test
     public void serializeReturnsResultOfFirstResponsibleConverter(final Message message, final Websocket socket)
-        throws InvalidMessageCode
+        throws InvalidMessageCodeException
     {
         new NonStrictExpectations() {{
             message.getMessageCode(); result = 1;
@@ -113,21 +113,21 @@ public class CompositeTest
         Assert.assertEquals("resultString", this.composite.serialize(message, socket));
     }
 
-    @Test(expected = MessageParseError.class)
-    public void deserializeThrowsExceptionIfNoMessageNumberIsPresent(final Websocket socket) throws MessageParseError, InvalidMessageCode
+    @Test(expected = MessageParseException.class)
+    public void deserializeThrowsExceptionIfNoMessageNumberIsPresent(final Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
         this.composite.deserialize("[ad,", socket);
     }
 
-    @Test(expected = InvalidMessageCode.class)
-    public void deserializeThrowsExceptionIfNoConverterCanHandleMessage(final Websocket socket) throws MessageParseError, InvalidMessageCode
+    @Test(expected = InvalidMessageCodeException.class)
+    public void deserializeThrowsExceptionIfNoConverterCanHandleMessage(final Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
         this.composite.deserialize("[1, ", socket);
     }
 
     @Test
     public void deserializeReturnsResultOfFirstDelegatedConverter(final Message messageOne, final Message messageTwo, final Websocket socket)
-        throws MessageParseError, InvalidMessageCode
+        throws MessageParseException, InvalidMessageCodeException
     {
         new NonStrictExpectations() {{
             CompositeTest.this.firstConverter.canConvert(anyInt); result = true;

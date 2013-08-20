@@ -1,10 +1,10 @@
 package de.innoaccel.wamp.server.converter;
 
-public class MessageParseError extends Exception
+public class MessageParseException extends Exception
 {
     private String message;
 
-    public MessageParseError(String message)
+    public MessageParseException(String message)
     {
         super("Cannot parse message");
 

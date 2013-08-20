@@ -21,23 +21,23 @@ public class PrefixMessageConverter implements Converter<PrefixMessage>
     }
 
     @Override
-    public String serialize(PrefixMessage message, Websocket socket) throws InvalidMessageCode
+    public String serialize(PrefixMessage message, Websocket socket) throws InvalidMessageCodeException
     {
         return "[" + Message.PREFIX + ", \"" + message.getPrefix() + "\", \"" + message.getURI() + "\"]";
     }
 
     @Override
-    public PrefixMessage deserialize(String message, Websocket socket) throws MessageParseError, InvalidMessageCode
+    public PrefixMessage deserialize(String message, Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
         Matcher matcher = PrefixMessageConverter.messagePattern.matcher(message);
 
         if (!matcher.matches()) {
-            throw new MessageParseError(message);
+            throw new MessageParseException(message);
         }
 
         int messageCode = Integer.parseInt(matcher.group("messageCode"));
         if (Message.PREFIX != messageCode) {
-            throw new InvalidMessageCode(messageCode);
+            throw new InvalidMessageCodeException(messageCode);
         }
 
         PrefixMessage rebuiltMessage = new PrefixMessage(

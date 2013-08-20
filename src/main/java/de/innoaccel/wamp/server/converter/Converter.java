@@ -7,7 +7,7 @@ public interface Converter<T extends Message>
 {
     public boolean canConvert(int messageCode);
 
-    public String serialize(T message, Websocket socket) throws InvalidMessageCode;
+    public String serialize(T message, Websocket socket) throws InvalidMessageCodeException;
 
-    public T deserialize(String message, Websocket socket) throws MessageParseError, InvalidMessageCode;
+    public T deserialize(String message, Websocket socket) throws MessageParseException, InvalidMessageCodeException;
 }

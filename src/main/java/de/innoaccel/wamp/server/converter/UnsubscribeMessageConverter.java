@@ -20,23 +20,23 @@ public class UnsubscribeMessageConverter implements Converter<UnsubscribeMessage
     }
 
     @Override
-    public String serialize(UnsubscribeMessage message, Websocket socket) throws InvalidMessageCode
+    public String serialize(UnsubscribeMessage message, Websocket socket) throws InvalidMessageCodeException
     {
         return "[" + Message.UNSUBSCRIBE + ", \"" + message.getTopicURI() + "\"]";
     }
 
     @Override
-    public UnsubscribeMessage deserialize(String message, Websocket socket) throws MessageParseError, InvalidMessageCode
+    public UnsubscribeMessage deserialize(String message, Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
         Matcher matcher = UnsubscribeMessageConverter.messagePattern.matcher(message);
 
         if (!matcher.matches()) {
-            throw new MessageParseError(message);
+            throw new MessageParseException(message);
         }
 
         int messageCode = Integer.parseInt(matcher.group("messageCode"));
         if (Message.UNSUBSCRIBE != messageCode) {
-            throw new InvalidMessageCode(messageCode);
+            throw new InvalidMessageCodeException(messageCode);
         }
 
         return new UnsubscribeMessage(socket.inflateCURI(matcher.group("uri")));

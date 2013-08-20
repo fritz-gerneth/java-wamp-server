@@ -1,10 +1,8 @@
 package de.innoaccel.wamp.server;
 
 import de.innoaccel.wamp.server.converter.Converter;
-import de.innoaccel.wamp.server.converter.InvalidMessageCode;
+import de.innoaccel.wamp.server.converter.InvalidMessageCodeException;
 import de.innoaccel.wamp.server.message.Message;
-import de.innoaccel.wamp.server.message.WelcomeMessage;
-import junit.framework.Assert;
 import mockit.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +30,7 @@ public class WampAdapterTest
 
     @Test
     public void afterConnectionEstablishedSavesNewAdapterInStore(final WebSocketSession session)
-        throws InvalidMessageCode, IOException
+        throws InvalidMessageCodeException, IOException
     {
         new NonStrictExpectations() {{
             WampAdapterTest.this.messageConverter.serialize((Message) any, (Websocket) any); result = "serialized";
@@ -47,7 +45,7 @@ public class WampAdapterTest
     }
 
     @Test
-    public void sendsWelcomeMessageWithSessionIdAfterEstablishedConnection(final WebSocketSession session) throws InvalidMessageCode, IOException
+    public void sendsWelcomeMessageWithSessionIdAfterEstablishedConnection(final WebSocketSession session) throws InvalidMessageCodeException, IOException
     {
         new NonStrictExpectations() {{
             session.getId(); result = "sessionId";
