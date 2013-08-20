@@ -49,6 +49,6 @@ public class EventMessageConverter extends JsonParsingConverter<EventMessage>
         }
         // TODO: can we formulate further contraints for the payload? Provide tests about the content?
 
-        return new EventMessage(socket.inflateCURI(topic), this.readAnyTypeAt(rootNode, 2));
+        return new EventMessage(socket.inflateCURI(topic), this.readAnyAt(rootNode, 2));
     }
 }
