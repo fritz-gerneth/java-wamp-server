@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import de.innoaccel.wamp.server.Websocket;
-import de.innoaccel.wamp.server.message.EventMessage;
 import de.innoaccel.wamp.server.message.Message;
 
 import java.io.IOException;
