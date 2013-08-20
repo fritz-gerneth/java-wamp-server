@@ -9,6 +9,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import java.io.IOException;
+import java.util.LinkedList;
 
 public class EventMessageConverterTest
 {
@@ -134,5 +135,16 @@ public class EventMessageConverterTest
         EventMessage message = this.converter.deserialize("[" + Message.EVENT + ", \"prefix:myEvent\", null]", socket);
 
         Assert.assertNotNull(message.getPayload());
+    }
+
+    @Test
+    public void serializeReturnsCorrectJsonRepresentation(final Websocket socket) throws InvalidMessageCodeException
+    {
+        EventMessage message = new EventMessage("http://effms.de", "payload");
+
+        Assert.assertEquals(
+            "[" + Message.EVENT + ",\"http://effms.de\",\"payload\"]",
+            this.converter.serialize(message, socket)
+        );
     }
 }

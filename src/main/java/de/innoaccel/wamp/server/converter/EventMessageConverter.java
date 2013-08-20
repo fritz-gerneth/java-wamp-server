@@ -1,5 +1,6 @@
 package de.innoaccel.wamp.server.converter;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
@@ -31,7 +32,15 @@ public class EventMessageConverter implements Converter<EventMessage>
     @Override
     public String serialize(EventMessage message, Websocket socket) throws InvalidMessageCodeException
     {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        try {
+            return this.objectMapper.writeValueAsString(new Object[] {
+                    Message.EVENT,
+                    message.getTopicURI(),
+                    message.getPayload()
+            });
+        } catch (JsonProcessingException ex) {
+            throw new InvalidMessageCodeException(Message.EVENT);
+        }
     }
 
     @Override

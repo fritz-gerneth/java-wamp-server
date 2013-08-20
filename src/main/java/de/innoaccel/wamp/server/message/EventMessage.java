@@ -1,5 +1,9 @@
 package de.innoaccel.wamp.server.message;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@JsonFormat()
 public class EventMessage implements Message
 {
     private String topicURI;
@@ -13,6 +17,7 @@ public class EventMessage implements Message
     }
 
     @Override
+    @JsonIgnore
     public int getMessageCode()
     {
         return Message.EVENT;
