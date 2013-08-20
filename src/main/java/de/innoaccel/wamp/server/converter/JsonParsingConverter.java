@@ -57,7 +57,7 @@ abstract public class JsonParsingConverter<T extends Message> implements Convert
 
     protected String readStringAt(JsonNode rootNode, int position) throws MessageParseException
     {
-        JsonNode stringNode = rootNode.get(1);
+        JsonNode stringNode = rootNode.get(position);
         if (null == stringNode || JsonNodeType.STRING != stringNode.getNodeType()) {
             throw new MessageParseException("Expected string-type at position " + position);
         }
