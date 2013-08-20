@@ -1,18 +1,13 @@
 package de.innoaccel.wamp.server.converter;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import de.innoaccel.wamp.server.Websocket;
 import de.innoaccel.wamp.server.message.Message;
 import de.innoaccel.wamp.server.message.UnsubscribeMessage;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class UnsubscribeMessageConverter implements Converter<UnsubscribeMessage>
+public class UnsubscribeMessageConverter extends JsonParsingConverter<UnsubscribeMessage>
 {
-    private static final Pattern messagePattern = Pattern.compile(
-        "\\[\\s*(?<messageCode>\\d+)\\s*,"
-      + "\\s*\"(?<uri>.+?)\"\\s*\\]"
-    );
-
     @Override
     public boolean canConvert(int messageCode)
     {
@@ -22,23 +17,26 @@ public class UnsubscribeMessageConverter implements Converter<UnsubscribeMessage
     @Override
     public String serialize(UnsubscribeMessage message, Websocket socket) throws InvalidMessageCodeException
     {
-        return "[" + Message.UNSUBSCRIBE + ", \"" + message.getTopicURI() + "\"]";
+        try {
+            return this.objectMapper.writeValueAsString(new Object[] {
+                Message.UNSUBSCRIBE,
+                message.getTopicURI()
+            });
+        } catch (JsonProcessingException ex) {
+            throw new InvalidMessageCodeException(Message.UNSUBSCRIBE);
+        }
     }
 
     @Override
-    public UnsubscribeMessage deserialize(String message, Websocket socket) throws MessageParseException, InvalidMessageCodeException
+    protected UnsubscribeMessage deserialize(JsonNode message, Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
-        Matcher matcher = UnsubscribeMessageConverter.messagePattern.matcher(message);
+        this.assertMessageCode(message, Message.UNSUBSCRIBE);
 
-        if (!matcher.matches()) {
-            throw new MessageParseException(message);
+        String topic = this.readStringAt(message, 1);
+        if (0 == topic.length()) {
+            throw new MessageParseException("Topic may not be empty");
         }
 
-        int messageCode = Integer.parseInt(matcher.group("messageCode"));
-        if (Message.UNSUBSCRIBE != messageCode) {
-            throw new InvalidMessageCodeException(messageCode);
-        }
-
-        return new UnsubscribeMessage(socket.inflateCURI(matcher.group("uri")));
+        return new UnsubscribeMessage(socket.inflateCURI(topic));
     }
 }
