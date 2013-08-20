@@ -97,7 +97,7 @@ public class UnsubscribeMessageConverterTest
         new Expectations() {{
             socket.inflateCURI("x"); result = "http://effms.de/";
         }};
-        UnsubscribeMessage message = this.converter.deserialize("[6, \"x\"]", socket);
+        this.converter.deserialize("[6, \"x\"]", socket);
     }
 
     @Test
