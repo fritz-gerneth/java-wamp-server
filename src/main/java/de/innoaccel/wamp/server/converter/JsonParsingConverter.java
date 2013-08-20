@@ -60,7 +60,13 @@ abstract public class JsonParsingConverter<T extends Message> implements Convert
         if (null == stringNode || JsonNodeType.STRING != stringNode.getNodeType()) {
             throw new MessageParseException("Expected string-type at position " + position);
         }
-        return stringNode.asText();
+
+        String text = stringNode.asText();
+        if (0 == text.length()) {
+            throw new MessageParseException("String-Type at position " + position + " may not be empty");
+        }
+
+        return text;
     }
 
     protected Object readAnyTypeAt(JsonNode rootNode, int position) throws MessageParseException
