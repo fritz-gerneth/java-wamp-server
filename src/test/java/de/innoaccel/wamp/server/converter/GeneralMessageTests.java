@@ -18,21 +18,21 @@ abstract public class GeneralMessageTests<T extends Message>
     }
 
     @Test(expected = MessageParseException.class)
-    public void deserializeThrowsMessageParseExceptionWhenThereIsNoFirstField(final Websocket socket)
+    public void deserializeThrowsMessageParseExceptionWhenThereIsNoMessageCodeField(final Websocket socket)
         throws IOException, MessageParseException, InvalidMessageCodeException
     {
         this.converter.deserialize("[]", socket);
     }
 
     @Test(expected = MessageParseException.class)
-    public void deserializeThrowsMessageParseExceptionWhenFirstFieldIsNoNumber(final Websocket socket)
+    public void deserializeThrowsMessageParseExceptionWhenMessageCodeIsNoNumber(final Websocket socket)
         throws IOException, MessageParseException, InvalidMessageCodeException
     {
         this.converter.deserialize("[null]", socket);
     }
 
     @Test(expected = MessageParseException.class)
-    public void deserializeThrowsMessageParseExceptionWhenFirstFieldIsNoInteger(final Websocket socket)
+    public void deserializeThrowsMessageParseExceptionWhenMessageCodeIsNoInteger(final Websocket socket)
         throws IOException, MessageParseException, InvalidMessageCodeException
     {
         this.converter.deserialize("[0.5f]", socket);
