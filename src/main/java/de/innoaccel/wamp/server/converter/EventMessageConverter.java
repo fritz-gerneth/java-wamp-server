@@ -9,10 +9,8 @@ import de.innoaccel.wamp.server.message.EventMessage;
 import de.innoaccel.wamp.server.message.Message;
 import java.io.IOException;
 
-public class EventMessageConverter implements Converter<EventMessage>
+public class EventMessageConverter extends JsonParsingConverter<EventMessage>
 {
-    private final ObjectMapper objectMapper;
-
     public  EventMessageConverter()
     {
         this(new ObjectMapper());
@@ -20,7 +18,7 @@ public class EventMessageConverter implements Converter<EventMessage>
 
     public EventMessageConverter(ObjectMapper objectMapper)
     {
-        this.objectMapper = objectMapper;
+        super(objectMapper);
     }
 
     @Override
