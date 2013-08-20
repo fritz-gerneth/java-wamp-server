@@ -9,6 +9,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+
 public class PrefixMessageConverterTest
 {
     private PrefixMessageConverter converter;
@@ -53,46 +55,89 @@ public class PrefixMessageConverterTest
         }};
 
         Assert.assertEquals(
-            "[1, \"myPrefix\", \"http://innoaccel.de/myPrefix\"]",
+            "[1,\"myPrefix\",\"http://innoaccel.de/myPrefix\"]",
             this.converter.serialize(message, socket)
         );
     }
 
     @Test(expected = MessageParseException.class)
-    public void deserializeThrowsExceptionOnInvalidMarkup(Websocket socket) throws MessageParseException, InvalidMessageCodeException
+    public void deserializeThrowsMessageParseExceptionWhenMessageIsNoArray(final Websocket socket)
+        throws IOException, MessageParseException, InvalidMessageCodeException
     {
-        this.converter.deserialize("no-valid-message", socket);
+        this.converter.deserialize("message", socket);
     }
 
     @Test(expected = MessageParseException.class)
-    public void deserializeThrowsExceptionOnEmptyPrefixField(Websocket socket) throws MessageParseException, InvalidMessageCodeException
+    public void deserializeThrowsMessageParseExceptionWhenThereIsNoFirstField(final Websocket socket)
+        throws IOException, MessageParseException, InvalidMessageCodeException
     {
-        this.converter.deserialize("[1, \"\", \"x\"]", socket);
+        this.converter.deserialize("[]", socket);
     }
 
     @Test(expected = MessageParseException.class)
-    public void deserialzeThrowsExceptionOnEmptyURIField(Websocket socket) throws MessageParseException, InvalidMessageCodeException
+    public void deserializeThrowsMessageParseExceptionWhenFirstFieldIsNoNumber(final Websocket socket)
+            throws IOException, MessageParseException, InvalidMessageCodeException
     {
-        this.converter.deserialize("[1, \"x\", \"\"]", socket);
+        this.converter.deserialize("[null]", socket);
+    }
+
+    @Test(expected = MessageParseException.class)
+    public void deserializeThrowsMessageParseExceptionWhenFirstFieldIsNoInteger(final Websocket socket)
+        throws IOException, MessageParseException, InvalidMessageCodeException
+    {
+        this.converter.deserialize("[0.5f]", socket);
     }
 
     @Test(expected = InvalidMessageCodeException.class)
-    public void deserialzeThrowsExceptionOnInvalidMessageCodeButValidMarkup(Websocket socket) throws MessageParseException, InvalidMessageCodeException
+    public void deserializeThrowsInvalidMessageCodeExceptionWhenWrongMessageCode(final Websocket socket)
+        throws IOException, MessageParseException, InvalidMessageCodeException
     {
-        this.converter.deserialize("[4, \"x\", \"x\"]", socket);
+        this.converter.deserialize("[" + Message.SUBSCRIBE + "]", socket);
+    }
+
+    @Test(expected = MessageParseException.class)
+    public void deserializeThrowsMessageParseExceptionWhenPrefixFieldIsNotPresent(final Websocket socket)
+        throws IOException, MessageParseException, InvalidMessageCodeException
+    {
+        this.converter.deserialize("[" + Message.PREFIX + "]", socket);
+    }
+
+    @Test(expected = MessageParseException.class)
+    public void deserializeThrowsMessageParseExceptionWhenPrefixFieldIsEmpty(final Websocket socket)
+        throws IOException, MessageParseException, InvalidMessageCodeException
+    {
+        this.converter.deserialize("[" + Message.PREFIX + ", \"\"]", socket);
+    }
+
+    @Test(expected = MessageParseException.class)
+    public void deserializeThrowsMessageParseExceptionWhenURIFieldIsNotPresent(Websocket socket)
+        throws IOException, MessageParseException, InvalidMessageCodeException
+    {
+        this.converter.deserialize("[" + Message.PREFIX + ", \"prefix\"]", socket);;
+    }
+
+    @Test(expected = MessageParseException.class)
+    public void deserializeThrowsMessageParseExceptionWhenURIFieldIsEmpty(Websocket socket)
+        throws IOException, MessageParseException, InvalidMessageCodeException
+    {
+        this.converter.deserialize("[" + Message.PREFIX + ", \"prefix\", \"\"]", socket);
     }
 
     @Test
-    public void deserialzeResultingPrefixMessageHasCorrectPrefix(Websocket socket) throws MessageParseException, InvalidMessageCodeException
+    public void deserializeReturnsPrefixMessageWithPrefixOfMessage(final Websocket socket)
+        throws IOException, MessageParseException, InvalidMessageCodeException
     {
-        PrefixMessage message = this.converter.deserialize("[1, \"prefix\", \"x\"]", socket);
+        PrefixMessage message = this.converter.deserialize("[" + Message.PREFIX + ", \"prefix\", \"URI\"]", socket);
+
         Assert.assertEquals("prefix", message.getPrefix());
     }
 
     @Test
-    public void deserialzeResultingPrefixMessageHasCorrectURI(Websocket socket) throws MessageParseException, InvalidMessageCodeException
+    public void deserializeReturnsPrefixMessageWithURIOfMessage(final Websocket socket)
+        throws IOException, MessageParseException, InvalidMessageCodeException
     {
-        PrefixMessage message = this.converter.deserialize("[1, \"x\", \"uri\"]", socket);
-        Assert.assertEquals("uri", message.getURI());
+        PrefixMessage message = this.converter.deserialize("[" + Message.PREFIX + ", \"prefix\", \"URI\"]", socket);
+
+        Assert.assertEquals("URI", message.getURI());
     }
 }
