@@ -1,11 +1,27 @@
 package de.innoaccel.wamp.server.converter;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import de.innoaccel.wamp.server.Websocket;
 import de.innoaccel.wamp.server.message.EventMessage;
 import de.innoaccel.wamp.server.message.Message;
+import java.io.IOException;
 
 public class EventMessageConverter implements Converter<EventMessage>
 {
+    private final ObjectMapper objectMapper;
+
+    public  EventMessageConverter()
+    {
+        this(new ObjectMapper());
+    }
+
+    public EventMessageConverter(ObjectMapper objectMapper)
+    {
+        this.objectMapper = objectMapper;
+    }
+
     @Override
     public boolean canConvert(int messageCode)
     {
@@ -13,14 +29,53 @@ public class EventMessageConverter implements Converter<EventMessage>
     }
 
     @Override
-    public String serialize(EventMessage message, Websocket socket) throws InvalidMessageCode
+    public String serialize(EventMessage message, Websocket socket) throws InvalidMessageCodeException
     {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public EventMessage deserialize(String message, Websocket socket) throws MessageParseError, InvalidMessageCode
+    public EventMessage deserialize(String message, Websocket socket) throws MessageParseException, InvalidMessageCodeException
     {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        JsonNode rootNode;
+        try {
+            rootNode = this.objectMapper.readTree(message);
+        } catch (IOException parseException) {
+            // TODO: check when this actually can happen, build a test-case for this
+            throw new MessageParseException(parseException.getMessage());
+        }
+
+        if (JsonNodeType.ARRAY != rootNode.getNodeType()) {
+            throw new MessageParseException("Message has invalid markup (not an array)");
+        }
+
+        JsonNode messageCodeNode = rootNode.get(0);
+        if (null == messageCodeNode || JsonNodeType.NUMBER != messageCodeNode.getNodeType() || !messageCodeNode.canConvertToInt()) {
+            throw new MessageParseException("Message has invalid markup (message code not a nunber)");
+        }
+
+        int messageCode = messageCodeNode.asInt();
+        if (Message.EVENT != messageCode) {
+            throw new InvalidMessageCodeException(messageCode);
+        }
+
+        JsonNode topicNode = rootNode.get(1);
+        if (null == topicNode || JsonNodeType.STRING != topicNode.getNodeType()) {
+            throw new MessageParseException("Message has invalid markup (topic is no string)");
+        }
+
+        String topic = topicNode.asText();
+        if (0 == topic.length()) {
+            throw new MessageParseException("Message has invalid markup (topic is not valid)");
+        }
+
+        JsonNode payloadNode = rootNode.get(2);
+        if (null == payloadNode) {
+            throw new MessageParseException("Message has invalid markup (no payload)");
+        }
+
+        // TODO: can we formulate further contraints for the payload? Provide tests about the content?
+
+        return new EventMessage(socket.inflateCURI(topic), payloadNode);
     }
 }
