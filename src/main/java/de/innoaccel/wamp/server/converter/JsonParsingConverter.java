@@ -43,12 +43,7 @@ abstract public class JsonParsingConverter<T extends Message> implements Convert
 
     protected void assertMessageCode(JsonNode rootNode, int messageCode) throws MessageParseException, InvalidMessageCodeException
     {
-        JsonNode messageCodeNode = rootNode.get(0);
-        if (null == messageCodeNode || JsonNodeType.NUMBER != messageCodeNode.getNodeType() || !messageCodeNode.canConvertToInt()) {
-            throw new MessageParseException("Message does not start with message code");
-        }
-
-        int actualMessageCode = messageCodeNode.asInt();
+        int actualMessageCode = this.readIntAt(rootNode, 0);
         if (actualMessageCode != messageCode) {
             throw new InvalidMessageCodeException(actualMessageCode);
         }
@@ -76,5 +71,15 @@ abstract public class JsonParsingConverter<T extends Message> implements Convert
             throw new MessageParseException("Expected object at position " + position);
         }
         return objectNode;
+    }
+
+    protected int readIntAt(JsonNode rootNode, int position) throws MessageParseException
+    {
+        JsonNode messageCodeNode = rootNode.get(position);
+        if (null == messageCodeNode || JsonNodeType.NUMBER != messageCodeNode.getNodeType() || !messageCodeNode.canConvertToInt()) {
+            throw new MessageParseException("Cannot read integer at position " + position);
+        }
+
+        return messageCodeNode.asInt();
     }
 }
