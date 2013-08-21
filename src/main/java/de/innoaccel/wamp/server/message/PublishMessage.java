@@ -12,7 +12,7 @@ public class PublishMessage implements Message
 
     private List<String> exclude;
 
-    private List<String> eligable;
+    private List<String> eligible;
 
     public PublishMessage(String topicURI, Object event)
     {
@@ -24,18 +24,18 @@ public class PublishMessage implements Message
         this(topicURI, event, excludeMe, null, null);
     }
 
-    public PublishMessage(String topicURI, Object event, List<String> exclude, List<String> eligable)
+    public PublishMessage(String topicURI, Object event, List<String> exclude, List<String> eligible)
     {
-        this(topicURI, event, false, exclude, eligable);
+        this(topicURI, event, false, exclude, eligible);
     }
 
-    private PublishMessage(String topicURI, Object event, boolean excludeMe, List<String> exclude, List<String> eligable)
+    private PublishMessage(String topicURI, Object event, boolean excludeMe, List<String> exclude, List<String> eligible)
     {
         this.topicURI = topicURI;
         this.event = event;
         this.excludeMe = excludeMe;
         this.exclude = exclude;
-        this.eligable = eligable;
+        this.eligible = eligible;
     }
 
     @Override
@@ -64,13 +64,13 @@ public class PublishMessage implements Message
         return exclude;
     }
 
-    public List<String> getEligable()
+    public List<String> getEligible()
     {
-        return eligable;
+        return eligible;
     }
 
     public boolean isTargeted()
     {
-        return (null != this.exclude || null != this.eligable);
+        return (null != this.exclude || null != this.eligible);
     }
 }
