@@ -18,12 +18,12 @@ public class CallResultMessage implements Message
         return Message.CALL_RESULT;
     }
 
-    private String getCallId()
+    public String getCallId()
     {
         return this.callId;
     }
 
-    private Object getResult()
+    public Object getResult()
     {
         return this.result;
     }
