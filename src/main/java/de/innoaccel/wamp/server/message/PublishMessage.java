@@ -68,4 +68,9 @@ public class PublishMessage implements Message
     {
         return eligable;
     }
+
+    public boolean isTargeted()
+    {
+        return (null != this.exclude || null != this.eligable);
+    }
 }
