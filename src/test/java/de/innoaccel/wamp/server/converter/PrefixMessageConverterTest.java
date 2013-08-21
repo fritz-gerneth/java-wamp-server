@@ -76,7 +76,7 @@ public class PrefixMessageConverterTest extends GeneralMessageTests<PrefixMessag
     public void deserializeThrowsMessageParseExceptionWhenURIFieldIsNotPresent(Websocket socket)
         throws IOException, MessageParseException, InvalidMessageCodeException
     {
-        this.converter.deserialize("[" + Message.PREFIX + ", \"prefix\"]", socket);;
+        this.converter.deserialize("[" + Message.PREFIX + ", \"prefix\"]", socket);
     }
 
     @Test(expected = MessageParseException.class)
