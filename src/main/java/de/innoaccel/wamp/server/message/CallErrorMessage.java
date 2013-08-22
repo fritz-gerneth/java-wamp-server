@@ -8,14 +8,14 @@ public class CallErrorMessage implements Message
 
     private String errorDesc;
 
-    private String errorDetails;
+    private Object errorDetails;
 
     public CallErrorMessage(String callId, String errorURI, String errorDesc)
     {
         this(callId, errorURI, errorDesc, null);
     }
 
-    public CallErrorMessage(String callId, String errorURI, String errorDesc, String errorDetails)
+    public CallErrorMessage(String callId, String errorURI, String errorDesc, Object errorDetails)
     {
         this.callId = callId;
         this.errorURI = errorURI;
@@ -44,7 +44,7 @@ public class CallErrorMessage implements Message
         return this.errorDesc;
     }
 
-    public String getErrorDetails()
+    public Object getErrorDetails()
     {
         return this.errorDetails;
     }
