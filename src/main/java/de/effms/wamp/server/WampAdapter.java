@@ -3,6 +3,7 @@ package de.effms.wamp.server;
 import de.effms.wamp.server.converter.Converter;
 import de.effms.wamp.server.converter.InvalidMessageCodeException;
 import de.effms.wamp.server.converter.MessageParseException;
+import de.effms.wamp.server.dispatcher.DispatcherInterface;
 import de.effms.wamp.server.message.Message;
 import de.effms.wamp.server.message.WelcomeMessage;
 import org.springframework.web.socket.CloseStatus;
@@ -16,20 +17,22 @@ import java.util.Map;
 
 public class WampAdapter extends TextWebSocketHandlerAdapter
 {
+    private final Converter messageConverter;
+
+    private final DispatcherInterface messageDispatcher;
 
     private final Map<String, Websocket> socketStore;
 
-    private final Converter messageConverter;
-
-    public WampAdapter(Converter messageConverter)
+    public WampAdapter(Converter messageConverter, DispatcherInterface messageDispatcher)
     {
-        this(messageConverter, new HashMap<String, Websocket>());
+        this(messageConverter, messageDispatcher, new HashMap<String, Websocket>());
     }
 
-    public WampAdapter(Converter messageConverter, Map<String, Websocket> socketStore)
+    public WampAdapter(Converter messageConverter, DispatcherInterface messageDispatcher, Map<String, Websocket> socketStore)
     {
-        this.socketStore = socketStore;
         this.messageConverter = messageConverter;
+        this.messageDispatcher = messageDispatcher;
+        this.socketStore = socketStore;
     }
 
     @Override
@@ -37,6 +40,7 @@ public class WampAdapter extends TextWebSocketHandlerAdapter
     {
         Websocket socket = this.socketStore.get(session.getId());
         Message message = socket.deserializeMessage(rawMessage.getPayload());
+        this.messageDispatcher.dispatch(message);
     }
 
     @Override

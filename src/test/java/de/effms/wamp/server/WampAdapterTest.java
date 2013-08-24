@@ -2,6 +2,8 @@ package de.effms.wamp.server;
 
 import de.effms.wamp.server.converter.Converter;
 import de.effms.wamp.server.converter.InvalidMessageCodeException;
+import de.effms.wamp.server.converter.MessageParseException;
+import de.effms.wamp.server.dispatcher.DispatcherInterface;
 import de.effms.wamp.server.message.Message;
 import mockit.*;
 import org.junit.Before;
@@ -20,12 +22,15 @@ public class WampAdapterTest
     private Converter messageConverter;
 
     @Mocked
+    private DispatcherInterface messageDispatcher;
+
+    @Mocked
     private Map<String, Websocket> socketStore;
 
     @Before
     public void setUp()
     {
-        this.adapter = new WampAdapter(this.messageConverter, this.socketStore);
+        this.adapter = new WampAdapter(this.messageConverter, this.messageDispatcher, this.socketStore);
     }
 
     @Test
@@ -49,13 +54,36 @@ public class WampAdapterTest
     {
         new NonStrictExpectations() {{
             session.getId(); result = "sessionId";
-            WampAdapterTest.this.messageConverter.serialize((Message) any, (Websocket) any); result = "serialized";
+            WampAdapterTest.this.messageConverter.serialize(withInstanceOf(Message.class), withInstanceOf(Websocket.class)); result = "serialized";
         }};
 
         this.adapter.afterConnectionEstablished(session);
 
         new Verifications() {{
-            session.sendMessage((TextMessage) any);
+            session.sendMessage(withInstanceOf(TextMessage.class));
+        }};
+    }
+
+    @Test
+    public void handleTextMessageDelegatesMarshaledMessageToDispatcher(
+        final WebSocketSession session, final TextMessage sourceMessage, final Message message
+    )
+        throws InvalidMessageCodeException, MessageParseException, IOException
+    {
+        new NonStrictExpectations() {
+            Websocket socket;
+            {
+                session.getId(); result = "sessionId";
+                WampAdapterTest.this.socketStore.get("sessionId"); result = socket;
+                sourceMessage.getPayload(); result = "message";
+                socket.deserializeMessage("message"); result = message;
+            }
+        };
+
+        this.adapter.handleTextMessage(session,sourceMessage);
+
+        new Verifications() {{
+            WampAdapterTest.this.messageDispatcher.dispatch(message);
         }};
     }
 }
