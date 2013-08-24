@@ -23,15 +23,18 @@ public class WampAdapter extends TextWebSocketHandlerAdapter
 
     private final Map<String, Websocket> socketStore;
 
-    public WampAdapter(Converter messageConverter, DispatcherInterface messageDispatcher)
+    private final String serverIdent;
+
+    public WampAdapter(Converter messageConverter, DispatcherInterface messageDispatcher, String serverIdent)
     {
-        this(messageConverter, messageDispatcher, new HashMap<String, Websocket>());
+        this(messageConverter, messageDispatcher, serverIdent, new HashMap<String, Websocket>());
     }
 
-    public WampAdapter(Converter messageConverter, DispatcherInterface messageDispatcher, Map<String, Websocket> socketStore)
+    public WampAdapter(Converter messageConverter, DispatcherInterface messageDispatcher, String serverIdent, Map<String, Websocket> socketStore)
     {
         this.messageConverter = messageConverter;
         this.messageDispatcher = messageDispatcher;
+        this.serverIdent = serverIdent;
         this.socketStore = socketStore;
     }
 
@@ -48,7 +51,7 @@ public class WampAdapter extends TextWebSocketHandlerAdapter
     {
         Websocket socket = new Websocket(session, this.messageConverter);
         this.socketStore.put(session.getId(), socket);
-        socket.sendMessage(new WelcomeMessage());
+        socket.sendMessage(new WelcomeMessage(this.serverIdent));
     }
 
     @Override

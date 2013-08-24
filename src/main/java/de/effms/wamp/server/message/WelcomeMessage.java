@@ -8,8 +8,16 @@ public class WelcomeMessage implements Message
 
     private String serverIdent;
 
-    public WelcomeMessage()
-    {}
+    public WelcomeMessage(String serverIdent)
+    {
+        this(serverIdent, 1);
+    }
+
+    public WelcomeMessage(String serverIdent, int protocolVersion)
+    {
+        this.protocolVersion = protocolVersion;
+        this.serverIdent = serverIdent;
+    }
 
     public WelcomeMessage(String sessionId, int protocolVersion, String serverIdent)
     {
@@ -28,28 +36,13 @@ public class WelcomeMessage implements Message
         return this.sessionId;
     }
 
-    public void setSessionId(String sessionId)
-    {
-        this.sessionId = sessionId;
-    }
-
     public int getProtocolVersion()
     {
         return this.protocolVersion;
     }
 
-    public void setProtocolVersion(int protocolVersion)
-    {
-        this.protocolVersion = protocolVersion;
-    }
-
     public String getServerIdent()
     {
         return this.serverIdent;
-    }
-
-    public void setServerIdent(String serverIdent)
-    {
-        this.serverIdent = serverIdent;
     }
 }

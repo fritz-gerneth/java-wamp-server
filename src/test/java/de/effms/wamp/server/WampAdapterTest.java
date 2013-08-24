@@ -30,7 +30,7 @@ public class WampAdapterTest
     @Before
     public void setUp()
     {
-        this.adapter = new WampAdapter(this.messageConverter, this.messageDispatcher, this.socketStore);
+        this.adapter = new WampAdapter(this.messageConverter, this.messageDispatcher, "'test-server", this.socketStore);
     }
 
     @Test
