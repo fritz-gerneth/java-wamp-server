@@ -67,12 +67,11 @@ public class WampAdapterTest
 
     @Test
     public void handleTextMessageDelegatesMarshaledMessageToDispatcher(
-        final WebSocketSession session, final TextMessage sourceMessage, final Message message
+        final WebSocketSession session, final TextMessage sourceMessage, final Message message, final Websocket socket
     )
         throws InvalidMessageCodeException, MessageParseException, IOException
     {
         new NonStrictExpectations() {
-            Websocket socket;
             {
                 session.getId(); result = "sessionId";
                 WampAdapterTest.this.socketStore.get("sessionId"); result = socket;
@@ -84,7 +83,7 @@ public class WampAdapterTest
         this.adapter.handleTextMessage(session,sourceMessage);
 
         new Verifications() {{
-            WampAdapterTest.this.messageDispatcher.dispatch(message);
+            WampAdapterTest.this.messageDispatcher.dispatch(message, socket);
         }};
     }
 }

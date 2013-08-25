@@ -44,7 +44,7 @@ public class WampAdapter extends TextWebSocketHandlerAdapter
     {
         Websocket socket = this.socketStore.get(session.getId());
         Message message = socket.deserializeMessage(rawMessage.getPayload());
-        this.messageDispatcher.dispatch(message);
+        this.messageDispatcher.dispatch(message, socket);
     }
 
     @Override
