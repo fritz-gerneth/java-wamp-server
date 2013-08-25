@@ -1,10 +1,11 @@
 package de.effms.wamp.server;
 
-import de.effms.wamp.server.converter.Converter;
-import de.effms.wamp.server.converter.InvalidMessageCodeException;
-import de.effms.wamp.server.converter.MessageParseException;
-import de.effms.wamp.server.dispatcher.DispatcherInterface;
-import de.effms.wamp.server.message.Message;
+import de.effms.wamp.core.Websocket;
+import de.effms.wamp.core.converter.Converter;
+import de.effms.wamp.core.converter.InvalidMessageCodeException;
+import de.effms.wamp.core.converter.MessageParseException;
+import de.effms.wamp.core.dispatcher.DispatcherInterface;
+import de.effms.wamp.core.message.Message;
 import mockit.*;
 import org.junit.Before;
 import org.junit.Test;

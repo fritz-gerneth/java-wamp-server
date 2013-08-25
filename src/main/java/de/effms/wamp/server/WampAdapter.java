@@ -1,11 +1,12 @@
 package de.effms.wamp.server;
 
-import de.effms.wamp.server.converter.Converter;
-import de.effms.wamp.server.converter.InvalidMessageCodeException;
-import de.effms.wamp.server.converter.MessageParseException;
-import de.effms.wamp.server.dispatcher.DispatcherInterface;
-import de.effms.wamp.server.message.Message;
-import de.effms.wamp.server.message.WelcomeMessage;
+import de.effms.wamp.core.Websocket;
+import de.effms.wamp.core.converter.Converter;
+import de.effms.wamp.core.converter.InvalidMessageCodeException;
+import de.effms.wamp.core.converter.MessageParseException;
+import de.effms.wamp.core.dispatcher.DispatcherInterface;
+import de.effms.wamp.core.message.Message;
+import de.effms.wamp.core.message.WelcomeMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
