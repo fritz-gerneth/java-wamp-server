@@ -1,6 +1,10 @@
-package de.effms.wamp.core.converter;
+package de.effms.wamp.core.converter.simple;
 
 import de.effms.wamp.core.Websocket;
+import de.effms.wamp.core.converter.GeneralMessageTests;
+import de.effms.wamp.core.converter.InvalidMessageCodeException;
+import de.effms.wamp.core.converter.MessageParseException;
+import de.effms.wamp.core.converter.simple.PublishMessageConverter;
 import de.effms.wamp.core.message.Message;
 import de.effms.wamp.core.message.PublishMessage;
 import junit.framework.Assert;

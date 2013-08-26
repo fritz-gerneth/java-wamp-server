@@ -1,9 +1,12 @@
-package de.effms.wamp.core.converter;
+package de.effms.wamp.core.converter.simple;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.effms.wamp.core.Websocket;
+import de.effms.wamp.core.converter.InvalidMessageCodeException;
+import de.effms.wamp.core.converter.JsonParsingConverter;
+import de.effms.wamp.core.converter.MessageParseException;
 import de.effms.wamp.core.message.EventMessage;
 import de.effms.wamp.core.message.Message;
 
