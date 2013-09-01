@@ -3,6 +3,7 @@ package de.effms.wamp.core.deserializer;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
 import de.effms.wamp.core.message.MessageType;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -66,5 +67,11 @@ abstract public class AbstractMessageDeserializer<T> extends JsonDeserializer<T>
     protected void assertNextIsMessageEnd(JsonParser parser) throws IOException
     {
         this.assertToken(JsonToken.END_ARRAY, parser.nextToken());
+    }
+
+    protected JsonNode readNextAsNode(JsonParser parser) throws IOException
+    {
+        parser.nextToken();
+        return parser.readValueAsTree();
     }
 }
