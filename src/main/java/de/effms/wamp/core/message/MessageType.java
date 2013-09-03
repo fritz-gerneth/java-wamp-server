@@ -24,4 +24,14 @@ public enum MessageType
     {
         return this.messageCode;
     }
+
+    public static MessageType typeOfCode(int messageCode) throws IllegalArgumentException
+    {
+        for (MessageType type: MessageType.values()) {
+            if (type.getMessageCode() == messageCode) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("Could not resolve " + messageCode + " to MessageCode");
+    }
 }
