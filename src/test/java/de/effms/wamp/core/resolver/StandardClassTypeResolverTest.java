@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class StandartClassTypeResolverTest
+public class StandardClassTypeResolverTest
 {
     private StandardClassTypeResolver resolver;
 
@@ -16,13 +16,13 @@ public class StandartClassTypeResolverTest
     @Before
     public void setUp()
     {
-        this.resolver = new StandardClassTypeResolver(StandartClassTypeResolverTest.class);
+        this.resolver = new StandardClassTypeResolver(StandardClassTypeResolverTest.class);
     }
 
     @Test
     public void returnsTypeOfConstructionOnAnyInput()
     {
-        Assert.assertEquals(StandartClassTypeResolverTest.class, this.resolver.tryResolve("test", this.socket));
-        Assert.assertEquals(StandartClassTypeResolverTest.class, this.resolver.tryResolve(null, this.socket));
+        Assert.assertEquals(StandardClassTypeResolverTest.class, this.resolver.tryResolve("test", this.socket));
+        Assert.assertEquals(StandardClassTypeResolverTest.class, this.resolver.tryResolve(null, this.socket));
     }
 }
