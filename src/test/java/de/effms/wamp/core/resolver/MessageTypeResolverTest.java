@@ -38,7 +38,7 @@ public class MessageTypeResolverTest
         throws MessageParseException
     {
         new NonStrictExpectations() {{
-            typeResolver.tryResolve(anyString); result = TestType.class;
+            typeResolver.tryResolve(anyString, (Websocket) any); result = TestType.class;
         }};
         this.resolver.addResolver(MessageType.CALL, typeResolver);
 
@@ -46,7 +46,7 @@ public class MessageTypeResolverTest
         this.resolver.resolve(message, this.socket);
 
         new Verifications() {{
-            typeResolver.tryResolve(message);
+            typeResolver.tryResolve(message, (Websocket) any);
         }};
     }
 
@@ -55,8 +55,8 @@ public class MessageTypeResolverTest
         throws MessageParseException
     {
         new NonStrictExpectations() {{
-            typeResolver.tryResolve(anyString); result = null;
-            typeResolver2.tryResolve(anyString); result = TestType.class;
+            typeResolver.tryResolve(anyString, (Websocket) any); result = null;
+            typeResolver2.tryResolve(anyString, (Websocket) any); result = TestType.class;
         }};
         this.resolver.addResolver(MessageType.CALL, typeResolver);
         this.resolver.addResolver(MessageType.CALL, typeResolver2);
@@ -65,8 +65,8 @@ public class MessageTypeResolverTest
         this.resolver.resolve(message, this.socket);
 
         new VerificationsInOrder() {{
-            typeResolver.tryResolve(message);
-            typeResolver2.tryResolve(message);
+            typeResolver.tryResolve(message, (Websocket) any);
+            typeResolver2.tryResolve(message, (Websocket) any);
         }};
     }
 
@@ -77,8 +77,8 @@ public class MessageTypeResolverTest
         throws MessageParseException
     {
         new NonStrictExpectations() {{
-            typeResolver.tryResolve(anyString); result = TestType.class;
-            typeResolver2.tryResolve(anyString); result = TestType.class;
+            typeResolver.tryResolve(anyString, (Websocket) any); result = TestType.class;
+            typeResolver2.tryResolve(anyString, (Websocket) any); result = TestType.class;
         }};
         this.resolver.addResolver(MessageType.CALL, typeResolver);
         this.resolver.addResolver(MessageType.CALL, typeResolver2);
@@ -87,8 +87,8 @@ public class MessageTypeResolverTest
         this.resolver.resolve(message, this.socket);
 
         new Verifications() {{
-            typeResolver.tryResolve(message); times = 1;
-            typeResolver2.tryResolve(message); times = 0;
+            typeResolver.tryResolve(message, (Websocket) any); times = 1;
+            typeResolver2.tryResolve(message, (Websocket) any); times = 0;
         }};
     }
 
@@ -97,7 +97,7 @@ public class MessageTypeResolverTest
         throws MessageParseException
     {
         new NonStrictExpectations() {{
-            typeResolver.tryResolve(anyString); result = null;
+            typeResolver.tryResolve(anyString, (Websocket) any); result = null;
         }};
         this.resolver.addResolver(MessageType.CALL, typeResolver);
 
@@ -109,7 +109,7 @@ public class MessageTypeResolverTest
         throws MessageParseException
     {
         new NonStrictExpectations() {{
-            typeResolver.tryResolve(anyString); result = TestType.class;
+            typeResolver.tryResolve(anyString, (Websocket) any); result = TestType.class;
         }};
         this.resolver.addResolver(MessageType.CALL, typeResolver);
 
@@ -122,6 +122,21 @@ public class MessageTypeResolverTest
         this.resolver.addResolver(MessageType.CALL, TestType.class);
 
         Assert.assertEquals(TestType.class, this.resolver.resolve("[2, \"\"]", this.socket));
+    }
+
+    @Test
+    public void resolvePassesSocketToResolvers(final StandardClassTypeResolver typeResolver) throws MessageParseException
+    {
+        new NonStrictExpectations() {{
+            typeResolver.tryResolve(anyString, (Websocket) any); result = TestType.class;
+        }};
+        this.resolver.addResolver(MessageType.CALL, typeResolver);
+
+        this.resolver.resolve("[2, \"\"]", socket);
+
+        new Verifications() {{
+            typeResolver.tryResolve(anyString, MessageTypeResolverTest.this.socket);
+        }};
     }
 
     public static class TestType {}

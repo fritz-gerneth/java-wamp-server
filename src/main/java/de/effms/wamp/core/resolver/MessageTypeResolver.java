@@ -66,7 +66,7 @@ public class MessageTypeResolver
 
         List<ClassTypeResolverInterface> codeSpecificResolvers = this.resolverMap.get(messageType);
         for (ClassTypeResolverInterface resolver: codeSpecificResolvers) {
-            Class t = resolver.tryResolve(message);
+            Class t = resolver.tryResolve(message, socket);
             if (null != t) {
                 return t;
             }
