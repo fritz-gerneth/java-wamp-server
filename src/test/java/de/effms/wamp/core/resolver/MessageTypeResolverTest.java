@@ -1,17 +1,19 @@
 package de.effms.wamp.core.resolver;
 
 import de.effms.wamp.core.MessageParseException;
+import de.effms.wamp.core.Websocket;
 import de.effms.wamp.core.message.MessageType;
+import mockit.*;
 import org.junit.Assert;
-import mockit.NonStrictExpectations;
-import mockit.Verifications;
-import mockit.VerificationsInOrder;
 import org.junit.Before;
 import org.junit.Test;
 
 public class MessageTypeResolverTest
 {
     private MessageTypeResolver resolver;
+
+    @Mocked
+    private Websocket socket;
 
     @Before
     public void setUp()
@@ -22,13 +24,13 @@ public class MessageTypeResolverTest
     @Test(expected = MessageParseException.class)
     public void resolveThrowsExceptionOnNonIntegerMessageCode() throws MessageParseException
     {
-        this.resolver.resolve("[false, ");
+        this.resolver.resolve("[false, ", this.socket);
     }
 
     @Test(expected = MessageParseException.class)
     public void resolveThrowsExceptionForMessageTypesWithNoRegisteredTypeResolver() throws MessageParseException
     {
-        this.resolver.resolve("[1, ");
+        this.resolver.resolve("[1, ", this.socket);
     }
 
     @Test
@@ -41,7 +43,7 @@ public class MessageTypeResolverTest
         this.resolver.addResolver(MessageType.CALL, typeResolver);
 
         final String message = "[2, \"\"]";
-        this.resolver.resolve(message);
+        this.resolver.resolve(message, this.socket);
 
         new Verifications() {{
             typeResolver.tryResolve(message);
@@ -60,7 +62,7 @@ public class MessageTypeResolverTest
         this.resolver.addResolver(MessageType.CALL, typeResolver2);
 
         final String message = "[2, \"\"]";
-        this.resolver.resolve(message);
+        this.resolver.resolve(message, this.socket);
 
         new VerificationsInOrder() {{
             typeResolver.tryResolve(message);
@@ -82,7 +84,7 @@ public class MessageTypeResolverTest
         this.resolver.addResolver(MessageType.CALL, typeResolver2);
 
         final String message = "[2, \"\"]";
-        this.resolver.resolve(message);
+        this.resolver.resolve(message, this.socket);
 
         new Verifications() {{
             typeResolver.tryResolve(message); times = 1;
@@ -99,7 +101,7 @@ public class MessageTypeResolverTest
         }};
         this.resolver.addResolver(MessageType.CALL, typeResolver);
 
-        this.resolver.resolve("[2, \"\"]");
+        this.resolver.resolve("[2, \"\"]", this.socket);
     }
 
     @Test
@@ -111,7 +113,7 @@ public class MessageTypeResolverTest
         }};
         this.resolver.addResolver(MessageType.CALL, typeResolver);
 
-        Assert.assertEquals(TestType.class, this.resolver.resolve("[2, \"\"]"));
+        Assert.assertEquals(TestType.class, this.resolver.resolve("[2, \"\"]", this.socket));
     }
 
     @Test
@@ -119,7 +121,7 @@ public class MessageTypeResolverTest
     {
         this.resolver.addResolver(MessageType.CALL, TestType.class);
 
-        Assert.assertEquals(TestType.class, this.resolver.resolve("[2, \"\"]"));
+        Assert.assertEquals(TestType.class, this.resolver.resolve("[2, \"\"]", this.socket));
     }
 
     public static class TestType {}

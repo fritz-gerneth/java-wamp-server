@@ -1,5 +1,7 @@
 package de.effms.wamp.core.resolver;
 
+import de.effms.wamp.core.Websocket;
+
 public class StandardClassTypeResolver implements ClassTypeResolverInterface
 {
     private final Class resolveTo;
@@ -9,7 +11,7 @@ public class StandardClassTypeResolver implements ClassTypeResolverInterface
         this.resolveTo = resolveTo;
     }
 
-    public Class tryResolve(String message)
+    public Class tryResolve(String message, Websocket socket)
     {
         return this.resolveTo;
     }

@@ -1,6 +1,7 @@
 package de.effms.wamp.core.resolver;
 
 import de.effms.wamp.core.MessageParseException;
+import de.effms.wamp.core.Websocket;
 import de.effms.wamp.core.message.MessageType;
 
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class MessageTypeResolver
         codeSpecificResolvers.add(resolver);
     }
 
-    public Class resolve(String message) throws MessageParseException
+    public Class resolve(String message, Websocket socket) throws MessageParseException
     {
         Matcher seg = this.messageCodeMatcher.matcher(message);
         if (!seg.matches()) {
@@ -49,14 +50,15 @@ public class MessageTypeResolver
         try {
             return this.resolve(
                 MessageType.typeOfCode(Integer.parseInt(seg.group("messageCode"))),
-                message
+                message,
+                socket
             );
         } catch (IllegalArgumentException ex) {
             throw new MessageParseException(ex);
         }
     }
 
-    protected Class resolve(MessageType messageType, String message) throws MessageParseException
+    protected Class resolve(MessageType messageType, String message, Websocket socket) throws MessageParseException
     {
         if (!this.resolverMap.containsKey(messageType)) {
             throw new MessageParseException("No class registered for " + messageType);
