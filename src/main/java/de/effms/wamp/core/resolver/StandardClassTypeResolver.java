@@ -1,17 +1,15 @@
 package de.effms.wamp.core.resolver;
 
-import java.lang.reflect.Type;
-
 public class StandardClassTypeResolver implements ClassTypeResolverInterface
 {
-    private final Type resolveTo;
+    private final Class resolveTo;
 
-    public StandardClassTypeResolver(Type resolveTo)
+    public StandardClassTypeResolver(Class resolveTo)
     {
         this.resolveTo = resolveTo;
     }
 
-    public Type tryResolve(String message)
+    public Class tryResolve(String message)
     {
         return this.resolveTo;
     }

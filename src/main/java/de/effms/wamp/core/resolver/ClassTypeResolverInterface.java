@@ -4,5 +4,5 @@ import java.lang.reflect.Type;
 
 public interface ClassTypeResolverInterface
 {
-    public Type tryResolve(String message);
+    public Class tryResolve(String message);
 }

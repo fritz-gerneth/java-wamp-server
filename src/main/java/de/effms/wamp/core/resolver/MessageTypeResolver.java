@@ -3,7 +3,6 @@ package de.effms.wamp.core.resolver;
 import de.effms.wamp.core.MessageParseException;
 import de.effms.wamp.core.message.MessageType;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +22,7 @@ public class MessageTypeResolver
         this.messageCodeMatcher = Pattern.compile("\\[\\s*(?<messageCode>\\d+)\\s*,(.*?)");
     }
 
-    public void addResolver(MessageType messageType, Type resolvedType)
+    public void addResolver(MessageType messageType, Class resolvedType)
     {
         this.addResolver(messageType, new StandardClassTypeResolver(resolvedType));
     }
@@ -40,7 +39,7 @@ public class MessageTypeResolver
         codeSpecificResolvers.add(resolver);
     }
 
-    public Type resolve(String message) throws MessageParseException
+    public Class resolve(String message) throws MessageParseException
     {
         Matcher seg = this.messageCodeMatcher.matcher(message);
         if (!seg.matches()) {
@@ -57,20 +56,20 @@ public class MessageTypeResolver
         }
     }
 
-    protected Type resolve(MessageType messageType, String message) throws MessageParseException
+    protected Class resolve(MessageType messageType, String message) throws MessageParseException
     {
         if (!this.resolverMap.containsKey(messageType)) {
-            throw new MessageParseException("No types registered for " + messageType);
+            throw new MessageParseException("No class registered for " + messageType);
         }
 
         List<ClassTypeResolverInterface> codeSpecificResolvers = this.resolverMap.get(messageType);
         for (ClassTypeResolverInterface resolver: codeSpecificResolvers) {
-            Type t = resolver.tryResolve(message);
+            Class t = resolver.tryResolve(message);
             if (null != t) {
                 return t;
             }
         }
 
-        throw new MessageParseException("Could not resolve " + message + " to a type");
+        throw new MessageParseException("Could not resolve " + message + " to a class");
     }
 }
